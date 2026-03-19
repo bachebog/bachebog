@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#F5C518">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>BacheBog — Crear cuenta</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #1A1A2E;
+      --surface: #16213E;
+      --surface2: #0F3460;
+      --accent: #F5C518;
+      --text: #F0F2F8;
+      --text2: #9BA3C0;
+      --text3: #5A6080;
+      --danger: #FF3A5C;
+      --success: #3AE3B7;
+      --radius: 16px;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 20px env(safe-area-inset-bottom, 24px);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ── BACKGROUND ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 70% 50% at 20% 10%, rgba(245,197,24,0.08) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 60% at 90% 90%, rgba(15,52,96,0.60) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .road-deco {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      height: 80px;
+      background: linear-gradient(180deg, transparent 0%, rgba(10,10,20,0.6) 100%);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .road-deco::after {
+      content: '';
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 260px;
+      height: 6px;
+      background: repeating-linear-gradient(90deg, rgba(245,197,24,0.3) 0px, rgba(245,197,24,0.3) 36px, transparent 36px, transparent 56px);
+      border-radius: 3px;
+    }
+
+    /* ── CARD ── */
+    .card {
+      position: relative;
+      z-index: 1;
+      background: rgba(22, 33, 62, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 28px;
+      padding: 32px 28px 28px;
+      width: 100%;
+      max-width: 390px;
+      box-shadow:
+        0 32px 80px rgba(0,0,0,0.6),
+        0 0 0 1px rgba(245,197,24,0.05),
+        inset 0 1px 0 rgba(255,255,255,0.07);
+      animation: slideUp 0.45s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(28px) scale(0.97); }
+      to   { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* ── HEADER ── */
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 26px;
+    }
+
+    .back-btn {
+      width: 40px;
+      height: 40px;
+      background: rgba(15,52,96,0.5);
+      border: 1.5px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-decoration: none;
+      font-size: 18px;
+      color: var(--text2);
+      flex-shrink: 0;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .back-btn:hover {
+      background: rgba(15,52,96,0.8);
+      border-color: rgba(245,197,24,0.25);
+    }
+
+    .header-text {}
+    .header-title {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--text);
+      letter-spacing: 0.5px;
+      line-height: 1.1;
+    }
+    .header-subtitle {
+      font-size: 12px;
+      color: var(--text3);
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .header-icon {
+      margin-left: auto;
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    /* ── FORM ── */
+    .form-group { margin-bottom: 14px; }
+
+    .form-label {
+      display: block;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 7px;
+    }
+
+    .input-wrap { position: relative; }
+
+    .input-icon {
+      position: absolute;
+      left: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      color: var(--text3);
+      pointer-events: none;
+      line-height: 1;
+    }
+
+    .input-status {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 16px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+
+    .form-input {
+      width: 100%;
+      background: rgba(15,52,96,0.5);
+      border: 1.5px solid rgba(255,255,255,0.09);
+      border-radius: var(--radius);
+      padding: 13px 40px 13px 44px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      outline: none;
+      transition: border-color 0.2s, background 0.2s, box-shadow 0.2s;
+    }
+    .form-input::placeholder { color: var(--text3); font-weight: 500; }
+    .form-input:focus {
+      border-color: var(--accent);
+      background: rgba(15,52,96,0.7);
+      box-shadow: 0 0 0 3px rgba(245,197,24,0.10);
+    }
+    .form-input.valid   { border-color: var(--success); }
+    .form-input.invalid { border-color: var(--danger); }
+
+    /* ── PASSWORD STRENGTH BAR ── */
+    .strength-bar-wrap {
+      margin-top: 8px;
+      display: none;
+    }
+    .strength-bar-wrap.visible { display: block; }
+    .strength-bar-track {
+      height: 4px;
+      background: rgba(255,255,255,0.08);
+      border-radius: 99px;
+      overflow: hidden;
+    }
+    .strength-bar-fill {
+      height: 100%;
+      border-radius: 99px;
+      width: 0%;
+      transition: width 0.3s, background 0.3s;
+    }
+    .strength-label {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text3);
+      margin-top: 4px;
+    }
+
+    /* ── MESSAGES ── */
+    .msg-box {
+      border-radius: 12px;
+      padding: 11px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      text-align: center;
+      display: none;
+    }
+    .msg-box.visible { display: block; animation: shake 0.35s ease; }
+    .msg-box.error {
+      background: rgba(255,58,92,0.12);
+      border: 1px solid rgba(255,58,92,0.28);
+      color: var(--danger);
+    }
+    .msg-box.success {
+      background: rgba(58,227,183,0.10);
+      border: 1px solid rgba(58,227,183,0.25);
+      color: var(--success);
+      animation: none !important;
+    }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25%      { transform: translateX(-6px); }
+      75%      { transform: translateX(6px); }
+    }
+
+    /* ── BUTTON ── */
+    .btn-primary {
+      width: 100%;
+      padding: 15px;
+      background: var(--accent);
+      color: #0A0B0E;
+      border: none;
+      border-radius: var(--radius);
+      font-family: 'Nunito', sans-serif;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.15s, opacity 0.15s, box-shadow 0.2s;
+      box-shadow: 0 8px 24px rgba(245,197,24,0.30);
+      margin-top: 4px;
+    }
+    .btn-primary::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, transparent 60%);
+    }
+    .btn-primary:hover  { box-shadow: 0 10px 32px rgba(245,197,24,0.45); }
+    .btn-primary:active { transform: scale(0.98); opacity: 0.9; }
+    .btn-primary:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
+
+    .spinner {
+      display: inline-block;
+      width: 17px;
+      height: 17px;
+      border: 2.5px solid rgba(0,0,0,0.25);
+      border-top-color: #0A0B0E;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 6px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── FOOTER ── */
+    .card-footer {
+      text-align: center;
+      margin-top: 18px;
+      font-size: 13px;
+      color: var(--text3);
+      font-weight: 600;
+    }
+    .card-footer a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 700;
+    }
+    .card-footer a:hover { text-decoration: underline; }
+
+    /* ── DIVIDER ── */
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    .divider-line { flex: 1; height: 1px; background: rgba(255,255,255,0.07); }
+    .divider-text { font-size: 11px; color: var(--text3); font-weight: 600; white-space: nowrap; }
+  </style>
+</head>
+<body>
+  <div class="road-deco"></div>
+
+  <div class="card">
+    <!-- Header -->
+    <div class="card-header">
+      <a href="../index.html" class="back-btn" title="Volver">←</a>
+      <div class="header-text">
+        <div class="header-title">Crear cuenta</div>
+        <div class="header-subtitle">BacheBog 🚧 — Reporta Bogotá</div>
+      </div>
+    </div>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span class="divider-text">Datos de registro</span>
+      <div class="divider-line"></div>
+    </div>
+
+    <!-- Mensajes de estado -->
+    <div class="msg-box error"   id="errorMsg"></div>
+    <div class="msg-box success" id="successMsg"></div>
+
+    <!-- Nombre completo -->
+    <div class="form-group">
+      <label class="form-label">Nombre completo</label>
+      <div class="input-wrap">
+        <span class="input-icon">👤</span>
+        <input type="text" id="nameInput" class="form-input"
+               placeholder="Tu nombre completo"
+               autocomplete="name" autocapitalize="words">
+        <span class="input-status" id="nameStatus"></span>
+      </div>
+    </div>
+
+    <!-- Correo -->
+    <div class="form-group">
+      <label class="form-label">Correo electrónico</label>
+      <div class="input-wrap">
+        <span class="input-icon">✉️</span>
+        <input type="email" id="emailInput" class="form-input"
+               placeholder="Correo electrónico"
+               autocomplete="email">
+        <span class="input-status" id="emailStatus"></span>
+      </div>
+    </div>
+
+    <!-- Contraseña -->
+    <div class="form-group">
+      <label class="form-label">Contraseña</label>
+      <div class="input-wrap">
+        <span class="input-icon">🔒</span>
+        <input type="password" id="passwordInput" class="form-input"
+               placeholder="Mínimo 6 caracteres"
+               autocomplete="new-password">
+        <span class="input-status" id="passwordStatus"></span>
+      </div>
+      <div class="strength-bar-wrap" id="strengthWrap">
+        <div class="strength-bar-track">
+          <div class="strength-bar-fill" id="strengthFill"></div>
+        </div>
+        <div class="strength-label" id="strengthLabel"></div>
+      </div>
+    </div>
+
+    <!-- Confirmar contraseña -->
+    <div class="form-group">
+      <label class="form-label">Confirmar contraseña</label>
+      <div class="input-wrap">
+        <span class="input-icon">🔑</span>
+        <input type="password" id="confirmInput" class="form-input"
+               placeholder="Repite tu contraseña"
+               autocomplete="new-password">
+        <span class="input-status" id="confirmStatus"></span>
+      </div>
+    </div>
+
+    <button class="btn-primary" id="registerBtn" onclick="handleRegister()">
+      Crear cuenta
+    </button>
+
+    <div class="card-footer">
+      ¿Ya tienes cuenta? <a href="../index.html">Inicia sesión</a>
+    </div>
+  </div>
+
+  <!-- Firebase -->
+  <script type="module">
+    import { initializeApp }                        from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+    import { getFirestore, doc, setDoc }            from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB7hT8OdmL6MMvSmfv9PRoQT0-4mhTBBB0",
+      authDomain: "bachebog-7393e.firebaseapp.com",
+      projectId: "bachebog-7393e",
+      storageBucket: "bachebog-7393e.firebasestorage.app",
+      messagingSenderId: "712370826301",
+      appId: "1:712370826301:web:19c8f77f773b615663ce54"
+    };
+
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
+
+    // ── VALIDACIÓN EN TIEMPO REAL ──
+
+    const nameInput    = document.getElementById('nameInput');
+    const emailInput   = document.getElementById('emailInput');
+    const passwordInput= document.getElementById('passwordInput');
+    const confirmInput = document.getElementById('confirmInput');
+
+    function setFieldState(input, statusEl, valid, icon) {
+      input.classList.toggle('valid',   valid === true);
+      input.classList.toggle('invalid', valid === false);
+      statusEl.textContent = valid === true ? '✅' : valid === false ? '❌' : '';
+      statusEl.style.opacity = valid !== null ? '1' : '0';
+    }
+
+    // Nombre
+    nameInput.addEventListener('blur', () => {
+      const ok = nameInput.value.trim().length >= 2;
+      setFieldState(nameInput, document.getElementById('nameStatus'), ok || nameInput.value === '' ? (nameInput.value.trim().length >= 2 ? true : null) : false);
+    });
+    nameInput.addEventListener('input', () => {
+      if (nameInput.classList.contains('invalid'))
+        setFieldState(nameInput, document.getElementById('nameStatus'), nameInput.value.trim().length >= 2 ? true : false);
+    });
+
+    // Email
+    function isValidEmail(e) { return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e); }
+    emailInput.addEventListener('blur', () => {
+      if (!emailInput.value) return;
+      setFieldState(emailInput, document.getElementById('emailStatus'), isValidEmail(emailInput.value));
+    });
+    emailInput.addEventListener('input', () => {
+      if (emailInput.classList.contains('invalid'))
+        setFieldState(emailInput, document.getElementById('emailStatus'), isValidEmail(emailInput.value));
+    });
+
+    // Contraseña + medidor de fortaleza
+    function getStrength(pwd) {
+      let score = 0;
+      if (pwd.length >= 6)  score++;
+      if (pwd.length >= 10) score++;
+      if (/[A-Z]/.test(pwd)) score++;
+      if (/[0-9]/.test(pwd)) score++;
+      if (/[^A-Za-z0-9]/.test(pwd)) score++;
+      return score;
+    }
+
+    const levels = [
+      { label: 'Muy débil',  color: '#FF3A5C', pct: '15%' },
+      { label: 'Débil',      color: '#FF5E3A', pct: '30%' },
+      { label: 'Regular',    color: '#F5C518', pct: '55%' },
+      { label: 'Buena',      color: '#3AE3B7', pct: '78%' },
+      { label: 'Fuerte 💪',  color: '#3AE3B7', pct: '100%'},
+    ];
+
+    passwordInput.addEventListener('input', () => {
+      const val = passwordInput.value;
+      const wrap = document.getElementById('strengthWrap');
+      const fill = document.getElementById('strengthFill');
+      const lbl  = document.getElementById('strengthLabel');
+
+      if (!val) {
+        wrap.classList.remove('visible');
+        setFieldState(passwordInput, document.getElementById('passwordStatus'), null, '');
+        return;
+      }
+
+      wrap.classList.add('visible');
+      const score = Math.min(getStrength(val), levels.length - 1);
+      const lvl   = levels[score];
+      fill.style.width      = lvl.pct;
+      fill.style.background = lvl.color;
+      lbl.textContent       = lvl.label;
+      lbl.style.color       = lvl.color;
+
+      const ok = val.length >= 6;
+      setFieldState(passwordInput, document.getElementById('passwordStatus'), ok ? true : false);
+
+      // Re-validar confirmación si ya tiene valor
+      if (confirmInput.value) validateConfirm();
+    });
+
+    function validateConfirm() {
+      const match = confirmInput.value === passwordInput.value && confirmInput.value !== '';
+      setFieldState(confirmInput, document.getElementById('confirmStatus'), match);
+      return match;
+    }
+    confirmInput.addEventListener('input', validateConfirm);
+
+    // ── REGISTRO ──
+    window.handleRegister = async function () {
+      const name     = nameInput.value.trim();
+      const email    = emailInput.value.trim();
+      const password = passwordInput.value;
+      const confirm  = confirmInput.value;
+
+      // Validaciones previas
+      if (!name || name.length < 2) {
+        return showError('Por favor ingresa tu nombre completo.');
+      }
+      if (!isValidEmail(email)) {
+        return showError('Ingresa un correo electrónico válido.');
+      }
+      if (password.length < 6) {
+        return showError('La contraseña debe tener al menos 6 caracteres.');
+      }
+      if (password !== confirm) {
+        return showError('Las contraseñas no coinciden. Verifica e intenta de nuevo.');
+      }
+
+      // UI de carga
+      const btn = document.getElementById('registerBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Creando cuenta…';
+      clearMessages();
+
+      try {
+        // 1. Crear usuario en Firebase Auth
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        const uid  = cred.user.uid;
+
+        // 2. Guardar nombre en Firestore → colección 'usuarios' → documento UID
+        await setDoc(doc(db, 'usuarios', uid), {
+          nombre:    name,
+          email:     email,
+          creadoEn:  new Date().toISOString(),
+        });
+
+        // 3. Éxito → redirigir
+        showSuccess('✅ ¡Cuenta creada! Redirigiendo…');
+        setTimeout(() => { window.location.href = 'home.html'; }, 1200);
+
+      } catch (error) {
+        btn.disabled  = false;
+        btn.textContent = 'Crear cuenta';
+
+        const msgs = {
+          'auth/email-already-in-use': 'Este correo ya está registrado. ¿Quieres iniciar sesión?',
+          'auth/invalid-email':        'El correo electrónico no es válido.',
+          'auth/weak-password':        'La contraseña es muy débil. Usa al menos 6 caracteres.',
+          'auth/network-request-failed':'Sin conexión. Verifica tu internet e intenta de nuevo.',
+          'auth/operation-not-allowed':'El registro no está habilitado. Contacta al administrador.',
+        };
+        showError('❌ ' + (msgs[error.code] || 'Ocurrió un error inesperado. Intenta de nuevo.'));
+      }
+    };
+
+    // ── UTILIDADES ──
+    function showError(msg) {
+      const el = document.getElementById('errorMsg');
+      el.textContent = msg;
+      el.classList.remove('visible');
+      void el.offsetWidth;
+      el.classList.add('visible');
+      document.getElementById('successMsg').classList.remove('visible');
+    }
+
+    function showSuccess(msg) {
+      const el = document.getElementById('successMsg');
+      el.textContent = msg;
+      el.classList.add('visible');
+      document.getElementById('errorMsg').classList.remove('visible');
+    }
+
+    function clearMessages() {
+      document.getElementById('errorMsg').classList.remove('visible');
+      document.getElementById('successMsg').classList.remove('visible');
+    }
+
+    // Enter en el último campo dispara el registro
+    confirmInput.addEventListener('keydown', e => {
+      if (e.key === 'Enter') window.handleRegister();
+    });
+  </script>
+</body>
+</html>
