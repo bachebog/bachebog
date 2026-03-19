@@ -7,50 +7,480 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>BacheBog — Menú Principal</title>
-  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg:       #1A1A2E;
+      --surface:  #16213E;
+      --surface2: #0F3460;
+      --accent:   #F5C518;
+      --text:     #F0F2F8;
+      --text2:    #9BA3C0;
+      --text3:    #5A6080;
+      --radius:   18px;
+      --nav-h:    72px;
+    }
 
-    body {
+    * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+    html, body {
+      height: 100%;
       font-family: 'Nunito', sans-serif;
-      background: #1A1A2E;
-      min-height: 100vh;
-      min-height: 100dvh;
+      background: var(--bg);
+      color: var(--text);
+      overflow: hidden;
+    }
+
+    /* ── SHELL ── */
+    .app-shell {
+      max-width: 430px;
+      margin: 0 auto;
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* ── TOP BAR ── */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 52px 20px 14px;
+      background: linear-gradient(180deg, rgba(10,10,20,0.85) 0%, transparent 100%);
+      position: relative;
+      z-index: 10;
+      flex-shrink: 0;
+    }
+
+    .top-logo {
+      font-size: 22px;
+      font-weight: 900;
+      color: var(--accent);
+      letter-spacing: 1px;
+      text-shadow: 0 0 20px rgba(245,197,24,0.3);
+    }
+
+    .logout-btn {
+      width: 38px;
+      height: 38px;
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.09);
+      border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: #F0F2F8;
+      cursor: pointer;
+      font-size: 18px;
+      color: var(--text2);
+      transition: background 0.2s, border-color 0.2s, color 0.2s;
     }
+    .logout-btn:hover  { background: rgba(255,58,92,0.12); border-color: rgba(255,58,92,0.3); color: #FF3A5C; }
+    .logout-btn:active { transform: scale(0.95); }
 
-    .container {
-      text-align: center;
-      padding: 40px 24px;
+    /* ── SCROLL AREA ── */
+    .scroll-area {
+      flex: 1;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 0 16px calc(var(--nav-h) + 16px);
+      -webkit-overflow-scrolling: touch;
     }
+    .scroll-area::-webkit-scrollbar { display: none; }
 
-    .icon {
-      font-size: 56px;
-      margin-bottom: 16px;
+    /* ── GREETING ── */
+    .greeting-block {
+      padding: 8px 4px 22px;
+      animation: fadeUp 0.4s ease forwards;
     }
-
-    h1 {
+    .greeting-hey {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text3);
+      letter-spacing: 0.5px;
+    }
+    .greeting-name {
       font-size: 28px;
       font-weight: 900;
-      color: #F5C518;
-      letter-spacing: 1px;
+      color: var(--text);
+      line-height: 1.15;
+      margin-top: 2px;
+    }
+    .greeting-name span { color: var(--accent); }
+    .greeting-sub {
+      font-size: 13px;
+      color: var(--text3);
+      font-weight: 600;
+      margin-top: 4px;
     }
 
-    p {
-      margin-top: 10px;
-      font-size: 14px;
-      color: #5A6080;
+    /* skeleton mientras carga el nombre */
+    .name-skeleton {
+      display: inline-block;
+      width: 130px;
+      height: 26px;
+      background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      border-radius: 8px;
+      vertical-align: middle;
     }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ── GRID DE TARJETAS ── */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    /* Primer card ocupa todo el ancho */
+    .nav-card:first-child { grid-column: 1 / -1; }
+
+    .nav-card {
+      background: var(--surface);
+      border: 1.5px solid rgba(255,255,255,0.07);
+      border-radius: var(--radius);
+      padding: 22px 18px;
+      cursor: pointer;
+      text-decoration: none;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.18s, border-color 0.18s, box-shadow 0.18s;
+      animation: fadeUp 0.4s ease forwards;
+      opacity: 0;
+    }
+
+    /* tarjetas pequeñas en columna */
+    .nav-card:not(:first-child) {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 20px 16px;
+    }
+
+    .nav-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(245,197,24,0.06) 0%, transparent 60%);
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .nav-card:hover  { transform: translateY(-2px); border-color: rgba(245,197,24,0.28); box-shadow: 0 8px 28px rgba(0,0,0,0.35); }
+    .nav-card:hover::before { opacity: 1; }
+    .nav-card:active { transform: scale(0.97); }
+
+    /* línea amarilla top al hover */
+    .nav-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 16px; right: 16px;
+      height: 2px;
+      background: var(--accent);
+      border-radius: 0 0 4px 4px;
+      opacity: 0;
+      transition: opacity 0.2s;
+    }
+    .nav-card:hover::after { opacity: 1; }
+
+    .card-icon {
+      font-size: 36px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .nav-card:not(:first-child) .card-icon { font-size: 30px; }
+
+    .card-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.2;
+    }
+    .nav-card:not(:first-child) .card-title { font-size: 15px; }
+    .card-desc {
+      font-size: 12px;
+      color: var(--text3);
+      font-weight: 600;
+      margin-top: 3px;
+    }
+
+    /* flecha solo en primer card */
+    .card-arrow {
+      margin-left: auto;
+      font-size: 20px;
+      color: var(--accent);
+      opacity: 0.7;
+      flex-shrink: 0;
+    }
+
+    /* highlight especial primer card */
+    .nav-card:first-child {
+      background: linear-gradient(135deg, #16213E 0%, #1a2a4a 100%);
+      border-color: rgba(245,197,24,0.22);
+      box-shadow: 0 4px 20px rgba(245,197,24,0.08);
+    }
+    .nav-card:first-child .card-title { font-size: 20px; }
+    .nav-card:first-child .card-desc  { font-size: 13px; }
+
+    /* delays */
+    .nav-card:nth-child(1) { animation-delay: 0.05s; }
+    .nav-card:nth-child(2) { animation-delay: 0.12s; }
+    .nav-card:nth-child(3) { animation-delay: 0.18s; }
+    .nav-card:nth-child(4) { animation-delay: 0.24s; }
+    .nav-card:nth-child(5) { animation-delay: 0.30s; }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── BOTTOM NAV ── */
+    .bottom-nav {
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px));
+      background: rgba(12, 16, 30, 0.96);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-top: 1px solid rgba(255,255,255,0.07);
+      display: flex;
+      align-items: flex-start;
+      padding-top: 8px;
+      z-index: 20;
+    }
+
+    .nav-item {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 4px 0;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.15s;
+    }
+    .nav-item:active { transform: scale(0.88); }
+    .nav-item-icon  { font-size: 22px; line-height: 1; }
+    .nav-item-label { font-size: 10px; font-weight: 700; color: var(--text3); letter-spacing: 0.3px; }
+    .nav-item.active .nav-item-label { color: var(--accent); }
+    .nav-item.active .nav-item-icon  { filter: drop-shadow(0 0 6px rgba(245,197,24,0.55)); }
+
+    /* FAB central */
+    .nav-fab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      cursor: pointer;
+      text-decoration: none;
+      margin-top: -20px;
+    }
+    .nav-fab-btn {
+      width: 52px;
+      height: 52px;
+      background: var(--accent);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 6px 20px rgba(245,197,24,0.40);
+      transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .nav-fab:active .nav-fab-btn { transform: scale(0.92); box-shadow: 0 3px 10px rgba(245,197,24,0.25); }
+    .nav-fab-label { font-size: 10px; font-weight: 700; color: var(--accent); letter-spacing: 0.3px; }
+
+    /* ── LOADING OVERLAY ── */
+    .loading-overlay {
+      position: fixed;
+      inset: 0;
+      background: var(--bg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+      transition: opacity 0.3s;
+    }
+    .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+    .loading-logo { text-align: center; }
+    .loading-logo-text { font-size: 26px; font-weight: 900; color: var(--accent); letter-spacing: 1px; margin-bottom: 20px; }
+    .loading-spinner {
+      width: 36px; height: 36px;
+      border: 3px solid rgba(245,197,24,0.15);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      margin: 0 auto;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
   </style>
 </head>
 <body>
-  <div class="container">
-    <div class="icon">🚧</div>
-    <h1>Menú Principal</h1>
-    <p>BacheBog — Próximamente más funciones</p>
+
+  <!-- Loading overlay mientras verifica auth -->
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-logo">
+      <div class="loading-logo-text">BacheBog 🚧</div>
+      <div class="loading-spinner"></div>
+    </div>
   </div>
+
+  <div class="app-shell">
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <div class="top-logo">BacheBog 🚧</div>
+      <button class="logout-btn" id="logoutBtn" title="Cerrar sesión">🚪</button>
+    </div>
+
+    <!-- Scroll Area -->
+    <div class="scroll-area">
+
+      <!-- Saludo -->
+      <div class="greeting-block">
+        <div class="greeting-hey">Bienvenido de nuevo</div>
+        <div class="greeting-name">Hola, <span id="userName"><span class="name-skeleton"></span></span> 👋</div>
+        <div class="greeting-sub">¿Qué vas a reportar hoy?</div>
+      </div>
+
+      <!-- Tarjetas -->
+      <div class="cards-grid">
+
+        <a class="nav-card" href="nuevo-reporte.html">
+          <div class="card-icon">🆕</div>
+          <div>
+            <div class="card-title">Nuevo Reporte</div>
+            <div class="card-desc">Reporta un bache o hueco en la vía</div>
+          </div>
+          <div class="card-arrow">→</div>
+        </a>
+
+        <a class="nav-card" href="mapa.html">
+          <div class="card-icon">🗺️</div>
+          <div>
+            <div class="card-title">Mapa</div>
+            <div class="card-desc">Ver reportes en el mapa</div>
+          </div>
+        </a>
+
+        <a class="nav-card" href="mis-reportes.html">
+          <div class="card-icon">📋</div>
+          <div>
+            <div class="card-title">Mis Reportes</div>
+            <div class="card-desc">Historial y estado</div>
+          </div>
+        </a>
+
+        <a class="nav-card" href="foro.html">
+          <div class="card-icon">👥</div>
+          <div>
+            <div class="card-title">Foro Ciudadano</div>
+            <div class="card-desc">Discute con la comunidad</div>
+          </div>
+        </a>
+
+        <a class="nav-card" href="perfil.html">
+          <div class="card-icon">👤</div>
+          <div>
+            <div class="card-title">Perfil</div>
+            <div class="card-desc">Tu cuenta y ajustes</div>
+          </div>
+        </a>
+
+      </div>
+    </div><!-- /scroll-area -->
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav">
+      <a class="nav-item" href="mapa.html">
+        <span class="nav-item-icon">🗺️</span>
+        <span class="nav-item-label">Mapa</span>
+      </a>
+      <a class="nav-item" href="mis-reportes.html">
+        <span class="nav-item-icon">📋</span>
+        <span class="nav-item-label">Reportes</span>
+      </a>
+      <a class="nav-fab" href="nuevo-reporte.html">
+        <div class="nav-fab-btn">🆕</div>
+        <span class="nav-fab-label">Reportar</span>
+      </a>
+      <a class="nav-item" href="foro.html">
+        <span class="nav-item-icon">👥</span>
+        <span class="nav-item-label">Foro</span>
+      </a>
+      <a class="nav-item active" href="home.html">
+        <span class="nav-item-icon">🏠</span>
+        <span class="nav-item-label">Inicio</span>
+      </a>
+    </nav>
+
+  </div>
+
+  <script type="module">
+    import { initializeApp }                         from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut }  from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc }             from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB7hT8OdmL6MMvSmfv9PRoQT0-4mhTBBB0",
+      authDomain: "bachebog-7393e.firebaseapp.com",
+      projectId: "bachebog-7393e",
+      storageBucket: "bachebog-7393e.firebasestorage.app",
+      messagingSenderId: "712370826301",
+      appId: "1:712370826301:web:19c8f77f773b615663ce54"
+    };
+
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
+
+    const overlay    = document.getElementById('loadingOverlay');
+    const userNameEl = document.getElementById('userName');
+
+    // ── Verificar autenticación ──
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) {
+        window.location.replace('../index.html');
+        return;
+      }
+
+      // Ocultar loading
+      overlay.classList.add('hidden');
+      setTimeout(() => overlay.remove(), 350);
+
+      // Leer nombre desde Firestore
+      try {
+        const snap   = await getDoc(doc(db, 'usuarios', user.uid));
+        const nombre = snap.exists()
+          ? snap.data().nombre
+          : (user.displayName || user.email.split('@')[0]);
+        userNameEl.textContent = nombre.split(' ')[0]; // solo primer nombre
+      } catch {
+        userNameEl.textContent = user.displayName || 'Usuario';
+      }
+    });
+
+    // ── Cerrar sesión ──
+    document.getElementById('logoutBtn').addEventListener('click', async () => {
+      if (!confirm('¿Cerrar sesión de BacheBog?')) return;
+      try {
+        await signOut(auth);
+        window.location.replace('../index.html');
+      } catch {
+        alert('Error al cerrar sesión. Intenta de nuevo.');
+      }
+    });
+  </script>
 </body>
 </html>
