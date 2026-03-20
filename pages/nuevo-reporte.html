@@ -75,7 +75,7 @@
 
     .top-title { font-size: 20px; font-weight: 900; }
 
-    /* ── BODY ── */
+    /* ── SCROLL AREA ── */
     .scroll-area {
       flex: 1;
       overflow-y: auto;
@@ -84,7 +84,7 @@
     }
     .scroll-area::-webkit-scrollbar { display: none; }
 
-    /* ── INTRO ── */
+    /* ── INTRO CARD ── */
     .intro-card {
       background: var(--surface);
       border: 1.5px solid rgba(255,255,255,0.07);
@@ -100,8 +100,8 @@
     .intro-title { font-size: 14px; font-weight: 800; }
     .intro-sub   { font-size: 12px; color: var(--text3); font-weight: 600; margin-top: 2px; }
 
-    /* ── MESSAGES ── */
-    .msg-box {
+    /* ── ERROR MESSAGE ── */
+    .msg-error {
       border-radius: 14px;
       padding: 14px 16px;
       font-size: 13px;
@@ -109,11 +109,17 @@
       margin-bottom: 18px;
       line-height: 1.55;
       display: none;
+      background: rgba(255,58,92,0.12);
+      border: 1.5px solid rgba(255,58,92,0.28);
+      color: var(--danger);
     }
-    .msg-box.visible { display: block; animation: fadeUp 0.3s ease; }
-    .msg-box.error   { background: rgba(255,58,92,0.12); border: 1.5px solid rgba(255,58,92,0.28); color: var(--danger); }
-    .msg-box.success { background: rgba(58,227,183,0.10); border: 1.5px solid rgba(58,227,183,0.25); color: var(--success); }
-    .countdown { display:inline-block; background:rgba(58,227,183,0.15); border-radius:6px; padding:1px 7px; font-size:12px; margin-left:4px; }
+    .msg-error.visible { display: block; animation: shake 0.35s ease; }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      25%      { transform: translateX(-5px); }
+      75%      { transform: translateX(5px); }
+    }
 
     /* ── FORM GROUPS ── */
     .form-group {
@@ -218,44 +224,29 @@
       transition: transform .2s;
     }
     .dot-leve     { background: rgba(58,227,183,.15); border: 2px solid rgba(58,227,183,.35); }
-    .dot-moderado { background: rgba(245,197,24,.15); border: 2px solid rgba(245,197,24,.35); }
-    .dot-grave    { background: rgba(255,58,92,.15);  border: 2px solid rgba(255,58,92,.35);  }
+    .dot-moderado { background: rgba(245,197,24,.15);  border: 2px solid rgba(245,197,24,.35); }
+    .dot-grave    { background: rgba(255,58,92,.15);   border: 2px solid rgba(255,58,92,.35);  }
     .sev-label {
       font-size: 12px; font-weight: 800;
-      color: var(--text2);
-      letter-spacing: .3px;
+      color: var(--text2); letter-spacing: .3px;
     }
-
     .severity-btn.selected {
       border-color: var(--accent);
-      background: rgba(245,197,24,.10);
-      box-shadow: 0 0 0 1px rgba(245,197,24,.18), 0 4px 16px rgba(245,197,24,.12);
+      background: rgba(245,197,24,0.10);
+      box-shadow: 0 4px 16px rgba(245,197,24,0.15);
     }
     .severity-btn.selected .sev-label { color: var(--accent); }
     .severity-btn.selected .sev-dot   { transform: scale(1.15); }
 
-    /* ── AVISO PORTAL ── */
-    .portal-notice {
-      background: rgba(15,52,96,.45);
-      border: 1.5px solid rgba(245,197,24,.14);
-      border-radius: var(--radius);
-      padding: 14px 16px;
-      display: flex; gap: 12px;
-      margin-bottom: 20px;
-    }
-    .portal-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
-    .portal-text { font-size: 12px; color: var(--text2); font-weight: 600; line-height: 1.55; }
-    .portal-text strong { color: var(--accent); font-weight: 800; }
-
     /* ── DIVIDER ── */
     .divider {
       display: flex; align-items: center; gap: 10px;
-      margin: 24px 0 20px;
+      margin: 6px 0 20px;
     }
-    .div-line  { flex:1; height:1px; background: rgba(255,255,255,.07); }
-    .div-label { font-size:11px; font-weight:700; color:var(--text3); letter-spacing:1px; text-transform:uppercase; }
+    .div-line { flex: 1; height: 1px; background: rgba(255,255,255,0.07); }
+    .div-label { font-size: 11px; color: var(--text3); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; }
 
-    /* ── BTN SUBMIT ── */
+    /* ── SUBMIT BUTTON ── */
     .btn-submit {
       width: 100%;
       padding: 17px;
@@ -264,285 +255,452 @@
       border: none;
       border-radius: var(--radius);
       font-family: 'Nunito', sans-serif;
-      font-size: 16px; font-weight: 800;
-      letter-spacing: .5px;
+      font-size: 17px;
+      font-weight: 900;
       cursor: pointer;
       position: relative; overflow: hidden;
-      transition: transform .15s, box-shadow .2s, opacity .2s;
-      box-shadow: 0 8px 28px rgba(245,197,24,.32);
+      transition: transform .15s, opacity .15s, box-shadow .2s;
+      box-shadow: 0 8px 28px rgba(245,197,24,0.35);
     }
     .btn-submit::after {
-      content:'';
-      position:absolute; inset:0;
-      background: linear-gradient(135deg, rgba(255,255,255,.18) 0%, transparent 60%);
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, transparent 55%);
     }
-    .btn-submit:hover  { box-shadow: 0 10px 36px rgba(245,197,24,.48); }
-    .btn-submit:active { transform: scale(.98); opacity: .9; }
-    .btn-submit:disabled { opacity:.55; cursor:not-allowed; transform:none; box-shadow:none; }
+    .btn-submit:hover   { box-shadow: 0 10px 36px rgba(245,197,24,0.50); }
+    .btn-submit:active  { transform: scale(0.98); opacity: 0.9; }
+    .btn-submit:disabled { opacity: 0.55; cursor: not-allowed; transform: none; }
 
     .spinner {
-      display:inline-block; width:17px; height:17px;
-      border:2.5px solid rgba(0,0,0,.25); border-top-color:#0A0B0E;
-      border-radius:50%; animation:spin .7s linear infinite;
-      vertical-align:middle; margin-right:6px;
+      display: inline-block;
+      width: 18px; height: 18px;
+      border: 2.5px solid rgba(0,0,0,0.25);
+      border-top-color: #0A0B0E;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      vertical-align: middle;
+      margin-right: 7px;
     }
-    @keyframes spin { to { transform:rotate(360deg); } }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ─────────────────────────────────────────
+       ── PANTALLA DE CONFIRMACIÓN ──
+    ───────────────────────────────────────── */
+    .confirm-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 40px 20px 60px;
+      flex: 1;
+      animation: fadeUp 0.45s cubic-bezier(0.34,1.4,0.64,1) forwards;
+    }
+    .confirm-screen.visible { display: flex; }
+
+    /* Círculo de éxito animado */
+    .confirm-icon-wrap {
+      width: 100px; height: 100px;
+      border-radius: 50%;
+      background: rgba(58,227,183,0.12);
+      border: 3px solid rgba(58,227,183,0.35);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 52px;
+      margin-bottom: 28px;
+      box-shadow: 0 0 40px rgba(58,227,183,0.20);
+      animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards;
+    }
+    @keyframes popIn {
+      from { transform: scale(0.5); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    .confirm-title {
+      font-size: 26px;
+      font-weight: 900;
+      color: var(--text);
+      margin-bottom: 10px;
+      line-height: 1.2;
+    }
+    .confirm-sub {
+      font-size: 14px;
+      color: var(--text2);
+      font-weight: 600;
+      line-height: 1.6;
+      max-width: 300px;
+      margin-bottom: 36px;
+    }
+    .confirm-sub strong { color: var(--accent); }
+
+    /* Info box dentro de la confirmación */
+    .confirm-info {
+      width: 100%;
+      background: rgba(15,52,96,0.5);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      margin-bottom: 28px;
+      text-align: left;
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+    }
+    .confirm-info-icon { font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+    .confirm-info-text { font-size: 13px; color: var(--text2); font-weight: 600; line-height: 1.55; }
+    .confirm-info-text strong { color: var(--accent); }
+
+    /* Botón principal de confirmación — igual al submit */
+    .btn-confirm-primary {
+      width: 100%;
+      padding: 17px;
+      background: var(--accent);
+      color: #0A0B0E;
+      border: none;
+      border-radius: var(--radius);
+      font-family: 'Nunito', sans-serif;
+      font-size: 17px;
+      font-weight: 900;
+      cursor: pointer;
+      position: relative; overflow: hidden;
+      transition: transform .15s, opacity .15s, box-shadow .2s;
+      box-shadow: 0 8px 28px rgba(245,197,24,0.35);
+      margin-bottom: 14px;
+      text-decoration: none;
+      display: block;
+    }
+    .btn-confirm-primary::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.18) 0%, transparent 55%);
+    }
+    .btn-confirm-primary:hover  { box-shadow: 0 10px 36px rgba(245,197,24,0.50); }
+    .btn-confirm-primary:active { transform: scale(0.98); opacity: 0.9; }
+
+    /* Botón secundario */
+    .btn-confirm-secondary {
+      width: 100%;
+      padding: 15px;
+      background: transparent;
+      color: var(--text2);
+      border: 1.5px solid rgba(255,255,255,0.10);
+      border-radius: var(--radius);
+      font-family: 'Nunito', sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: border-color .2s, color .2s, background .2s;
+      text-decoration: none;
+      display: block;
+      text-align: center;
+    }
+    .btn-confirm-secondary:hover  { border-color: rgba(245,197,24,0.3); color: var(--accent); background: rgba(245,197,24,0.05); }
+    .btn-confirm-secondary:active { transform: scale(0.98); }
+
+    /* ── LOADING OVERLAY ── */
+    .loading-overlay {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 999;
+      transition: opacity 0.3s;
+    }
+    .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+    .loading-spinner {
+      width: 36px; height: 36px;
+      border: 3px solid rgba(245,197,24,0.15);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+
     @keyframes fadeUp {
-      from { opacity:0; transform:translateY(12px); }
-      to   { opacity:1; transform:translateY(0); }
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
-<div class="app-shell">
 
-  <!-- Top Bar -->
-  <div class="top-bar">
-    <a class="back-btn" href="home.html">←</a>
-    <div class="top-title">🆕 Nuevo Reporte</div>
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
   </div>
 
-  <div class="scroll-area">
+  <div class="app-shell">
 
-    <!-- Intro -->
-    <div class="intro-card">
-      <div class="intro-icon">🚧</div>
-      <div>
-        <div class="intro-title">Reporta un daño vial</div>
-        <div class="intro-sub">Tu reporte ayuda a priorizar reparaciones en Bogotá</div>
-      </div>
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <a href="home.html" class="back-btn" id="backBtn" title="Volver">←</a>
+      <div class="top-title" id="topTitle">🆕 Nuevo Reporte</div>
     </div>
 
-    <!-- Mensajes -->
-    <div class="msg-box error"   id="errorMsg"></div>
-    <div class="msg-box success" id="successMsg"></div>
+    <!-- ═══════════════════════════
+         FORMULARIO
+    ════════════════════════════ -->
+    <div class="scroll-area" id="formArea">
 
-    <!-- 1. Dirección -->
-    <div class="form-group">
-      <label class="form-label">📍 Dirección <span class="req">*</span></label>
-      <input
-        type="text"
-        id="direccionInput"
-        class="form-input"
-        placeholder="Ej: Cra 7 con Calle 72"
-        autocomplete="street-address"
-        autocapitalize="words"
-        maxlength="120"
+      <!-- Intro -->
+      <div class="intro-card">
+        <span class="intro-icon">🚧</span>
+        <div>
+          <div class="intro-title">Reporta un daño vial</div>
+          <div class="intro-sub">Tu reporte se guarda en BacheBog y podrás radicarlo en el IDU.</div>
+        </div>
+      </div>
+
+      <!-- Error -->
+      <div class="msg-error" id="errorMsg"></div>
+
+      <!-- 1. Dirección -->
+      <div class="form-group">
+        <label class="form-label">📍 Dirección <span class="req">*</span></label>
+        <input
+          type="text"
+          id="direccionInput"
+          class="form-input"
+          placeholder="Ej: Cra 7 con Calle 72"
+          autocomplete="street-address"
+          autocapitalize="words"
+          maxlength="120"
+        >
+      </div>
+
+      <!-- 2. Tipo de daño -->
+      <div class="form-group">
+        <label class="form-label">🔧 Tipo de daño <span class="req">*</span></label>
+        <div class="select-wrap">
+          <select id="tipoSelect" class="form-select">
+            <option value="" disabled selected>Selecciona el tipo de daño…</option>
+            <option value="Hueco profundo">Hueco profundo</option>
+            <option value="Hueco superficial">Hueco superficial</option>
+            <option value="Hundimiento">Hundimiento</option>
+            <option value="Grieta">Grieta</option>
+            <option value="Deterioro general">Deterioro general</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 3. Severidad -->
+      <div class="form-group">
+        <label class="form-label">⚠️ Severidad</label>
+        <div class="severity-grid">
+          <button type="button" class="severity-btn" data-value="Leve" onclick="selectSev(this)">
+            <div class="sev-dot dot-leve">🟢</div>
+            <span class="sev-label">Leve</span>
+          </button>
+          <button type="button" class="severity-btn selected" data-value="Moderado" onclick="selectSev(this)">
+            <div class="sev-dot dot-moderado">🟡</div>
+            <span class="sev-label">Moderado</span>
+          </button>
+          <button type="button" class="severity-btn" data-value="Grave" onclick="selectSev(this)">
+            <div class="sev-dot dot-grave">🔴</div>
+            <span class="sev-label">Grave</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- 4. Descripción -->
+      <div class="form-group">
+        <label class="form-label">
+          📝 Descripción
+          <span style="color:var(--text3);letter-spacing:0;text-transform:none;font-size:10px;font-weight:600">(opcional)</span>
+        </label>
+        <textarea
+          id="descripcionInput"
+          class="form-textarea"
+          placeholder="Describe el daño: tamaño, peligrosidad, contexto…"
+          maxlength="200"
+        ></textarea>
+        <div class="char-count" id="charCount">0 / 200</div>
+      </div>
+
+      <div class="divider">
+        <div class="div-line"></div>
+        <span class="div-label">Listo para enviar</span>
+        <div class="div-line"></div>
+      </div>
+
+      <button class="btn-submit" id="submitBtn" onclick="handleSubmit()">
+        Enviar Reporte 🚀
+      </button>
+
+    </div><!-- /formArea -->
+
+    <!-- ═══════════════════════════
+         PANTALLA DE CONFIRMACIÓN
+    ════════════════════════════ -->
+    <div class="confirm-screen" id="confirmScreen">
+
+      <div class="confirm-icon-wrap">✅</div>
+
+      <div class="confirm-title">¡Reporte enviado<br>exitosamente!</div>
+      <div class="confirm-sub">
+        Para completar tu <strong>derecho de petición</strong>,
+        toca el botón de abajo y llena el formulario en Portal Bogotá.
+      </div>
+
+      <div class="confirm-info">
+        <span class="confirm-info-icon">🏛️</span>
+        <div class="confirm-info-text">
+          Portal Bogotá es el canal oficial para radicar peticiones ante el
+          <strong>IDU</strong> y la Alcaldía. Tu reporte ya quedó guardado en BacheBog.
+        </div>
+      </div>
+
+      <!-- Botón principal — el usuario lo toca = Safari lo permite -->
+      <a
+        href="https://portalweb.bogota.gov.co"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn-confirm-primary"
       >
-    </div>
+        📋 Abrir Portal Bogotá
+      </a>
 
-    <!-- 2. Tipo de daño -->
-    <div class="form-group">
-      <label class="form-label">🔧 Tipo de daño <span class="req">*</span></label>
-      <div class="select-wrap">
-        <select id="tipoSelect" class="form-select">
-          <option value="" disabled selected>Selecciona el tipo de daño…</option>
-          <option value="Hueco profundo">Hueco profundo</option>
-          <option value="Hueco superficial">Hueco superficial</option>
-          <option value="Hundimiento">Hundimiento</option>
-          <option value="Grieta">Grieta</option>
-          <option value="Deterioro general">Deterioro general</option>
-        </select>
-      </div>
-    </div>
+      <!-- Botón secundario -->
+      <a href="mis-reportes.html" class="btn-confirm-secondary">
+        Ver mis reportes
+      </a>
 
-    <!-- 3. Severidad -->
-    <div class="form-group">
-      <label class="form-label">⚠️ Severidad</label>
-      <div class="severity-grid">
-        <button type="button" class="severity-btn" data-value="Leve" onclick="selectSev(this)">
-          <div class="sev-dot dot-leve">🟢</div>
-          <span class="sev-label">Leve</span>
-        </button>
-        <button type="button" class="severity-btn selected" data-value="Moderado" onclick="selectSev(this)">
-          <div class="sev-dot dot-moderado">🟡</div>
-          <span class="sev-label">Moderado</span>
-        </button>
-        <button type="button" class="severity-btn" data-value="Grave" onclick="selectSev(this)">
-          <div class="sev-dot dot-grave">🔴</div>
-          <span class="sev-label">Grave</span>
-        </button>
-      </div>
-    </div>
+    </div><!-- /confirmScreen -->
 
-    <!-- 4. Descripción -->
-    <div class="form-group">
-      <label class="form-label">
-        📝 Descripción
-        <span style="color:var(--text3);letter-spacing:0;text-transform:none;font-size:10px;font-weight:600">(opcional)</span>
-      </label>
-      <textarea
-        id="descripcionInput"
-        class="form-textarea"
-        placeholder="Describe el daño: tamaño, peligrosidad, contexto…"
-        maxlength="200"
-      ></textarea>
-      <div class="char-count" id="charCount">0 / 200</div>
-    </div>
+  </div><!-- /app-shell -->
 
-    <div class="divider">
-      <div class="div-line"></div>
-      <span class="div-label">Al enviar</span>
-      <div class="div-line"></div>
-    </div>
+  <script type="module">
+    import { initializeApp }                            from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged }              from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, addDoc, collection }
+      from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-    <!-- Aviso Portal Bogotá -->
-    <div class="portal-notice">
-      <div class="portal-icon">🏛️</div>
-      <div class="portal-text">
-        Al enviar se abrirá <strong>Portal Bogotá</strong> en tu navegador para radicar el derecho de petición oficial ante el IDU o la alcaldía.
-      </div>
-    </div>
+    const firebaseConfig = {
+      apiKey: "AIzaSyB7hT8OdmL6MMvSmfv9PRoQT0-4mhTBBB0",
+      authDomain: "bachebog-7393e.firebaseapp.com",
+      projectId: "bachebog-7393e",
+      storageBucket: "bachebog-7393e.firebasestorage.app",
+      messagingSenderId: "712370826301",
+      appId: "1:712370826301:web:19c8f77f773b615663ce54"
+    };
 
-    <!-- Botón -->
-    <button class="btn-submit" id="submitBtn" onclick="handleSubmit()">
-      Enviar Reporte 🚀
-    </button>
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
 
-  </div>
-</div>
+    let currentUser   = null;
+    let nombreUsuario = 'Usuario';
 
-<script type="module">
-  import { initializeApp }    from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
-  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
-  import { getFirestore, doc, getDoc, addDoc, collection }
-    from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+    const overlay = document.getElementById('loadingOverlay');
 
-  const firebaseConfig = {
-    apiKey: "AIzaSyB7hT8OdmL6MMvSmfv9PRoQT0-4mhTBBB0",
-    authDomain: "bachebog-7393e.firebaseapp.com",
-    projectId: "bachebog-7393e",
-    storageBucket: "bachebog-7393e.firebasestorage.app",
-    messagingSenderId: "712370826301",
-    appId: "1:712370826301:web:19c8f77f773b615663ce54"
-  };
+    // ── Auth guard ──
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.replace('../index.html'); return; }
+      currentUser = user;
+      try {
+        const snap = await getDoc(doc(db, 'usuarios', user.uid));
+        nombreUsuario = snap.exists()
+          ? (snap.data().nombre || user.displayName || 'Usuario')
+          : (user.displayName || user.email.split('@')[0]);
+      } catch { nombreUsuario = user.displayName || 'Usuario'; }
 
-  const app  = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db   = getFirestore(app);
-
-  let currentUser   = null;
-  let nombreUsuario = 'Usuario';
-
-  // ── Auth guard ──
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) { window.location.replace('../index.html'); return; }
-    currentUser = user;
-    try {
-      const snap = await getDoc(doc(db, 'usuarios', user.uid));
-      nombreUsuario = snap.exists()
-        ? (snap.data().nombre || user.displayName || 'Usuario')
-        : (user.displayName || user.email.split('@')[0]);
-    } catch { nombreUsuario = user.displayName || 'Usuario'; }
-  });
-
-  // ── Severidad ──
-  window.selectSev = function(btn) {
-    document.querySelectorAll('.severity-btn').forEach(b => b.classList.remove('selected'));
-    btn.classList.add('selected');
-  };
-
-  // ── Char count ──
-  const descEl      = document.getElementById('descripcionInput');
-  const charCountEl = document.getElementById('charCount');
-  descEl.addEventListener('input', () => {
-    const n = descEl.value.length;
-    charCountEl.textContent = `${n} / 200`;
-    charCountEl.className = 'char-count' + (n >= 200 ? ' limit' : n >= 160 ? ' near' : '');
-  });
-
-  // Limpiar invalid al editar
-  ['direccionInput','tipoSelect'].forEach(id => {
-    document.getElementById(id).addEventListener('input', () => {
-      document.getElementById(id).classList.remove('invalid');
-      document.getElementById('errorMsg').classList.remove('visible');
+      overlay.classList.add('hidden');
+      setTimeout(() => overlay.remove(), 300);
     });
-    document.getElementById(id).addEventListener('change', () => {
-      document.getElementById(id).classList.remove('invalid');
-      document.getElementById('errorMsg').classList.remove('visible');
+
+    // ── Severidad ──
+    window.selectSev = function(btn) {
+      document.querySelectorAll('.severity-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    };
+
+    // ── Char count ──
+    const descEl      = document.getElementById('descripcionInput');
+    const charCountEl = document.getElementById('charCount');
+    descEl.addEventListener('input', () => {
+      const n = descEl.value.length;
+      charCountEl.textContent = `${n} / 200`;
+      charCountEl.className = 'char-count' + (n >= 200 ? ' limit' : n >= 160 ? ' near' : '');
     });
-  });
 
-  // ── Submit ──
-  window.handleSubmit = async function() {
-    const direccion   = document.getElementById('direccionInput').value.trim();
-    const tipo        = document.getElementById('tipoSelect').value;
-    const descripcion = document.getElementById('descripcionInput').value.trim();
-    const severidad   = document.querySelector('.severity-btn.selected')?.dataset.value || 'Moderado';
+    // Limpiar estado inválido al editar
+    ['direccionInput','tipoSelect'].forEach(id => {
+      const el = document.getElementById(id);
+      el.addEventListener('input',  () => { el.classList.remove('invalid'); hideError(); });
+      el.addEventListener('change', () => { el.classList.remove('invalid'); hideError(); });
+    });
 
-    let hasError = false;
-    if (!direccion) { document.getElementById('direccionInput').classList.add('invalid'); hasError = true; }
-    if (!tipo)      { document.getElementById('tipoSelect').classList.add('invalid');     hasError = true; }
-    if (hasError)   { showError('❌ Por favor completa la dirección y el tipo de daño.'); return; }
-    if (!currentUser) {
-      showError('❌ Sesión expirada. Vuelve a iniciar sesión.');
-      setTimeout(() => window.location.replace('../index.html'), 2000);
-      return;
+    // ── Submit ──
+    window.handleSubmit = async function() {
+      const direccion   = document.getElementById('direccionInput').value.trim();
+      const tipo        = document.getElementById('tipoSelect').value;
+      const descripcion = descEl.value.trim();
+      const severidad   = document.querySelector('.severity-btn.selected')?.dataset.value || 'Moderado';
+
+      // Validaciones
+      let hasError = false;
+      if (!direccion) { document.getElementById('direccionInput').classList.add('invalid'); hasError = true; }
+      if (!tipo)      { document.getElementById('tipoSelect').classList.add('invalid');     hasError = true; }
+      if (hasError)   { showError('❌ Por favor completa la dirección y el tipo de daño.'); return; }
+      if (!currentUser) {
+        showError('❌ Sesión expirada. Vuelve a iniciar sesión.');
+        setTimeout(() => window.location.replace('../index.html'), 2000);
+        return;
+      }
+
+      // Loading
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Enviando…';
+      hideError();
+
+      try {
+        // Guardar en Firestore
+        await addDoc(collection(db, 'reportes'), {
+          direccion,
+          tipo,
+          severidad,
+          descripcion,
+          fecha:         new Date().toISOString(),
+          userId:        currentUser.uid,
+          nombreUsuario,
+          estado:        'Pendiente',
+          votos:         0,
+        });
+
+        // Mostrar pantalla de confirmación
+        showConfirmScreen();
+
+      } catch (error) {
+        btn.disabled = false;
+        btn.textContent = 'Enviar Reporte 🚀';
+        const msgs = {
+          'permission-denied':  'Sin permisos. Verifica tu sesión.',
+          'unavailable':        'Sin conexión. Verifica tu internet.',
+          'resource-exhausted': 'Demasiadas solicitudes. Espera un momento.',
+        };
+        const code = (error.code || '').replace('firestore/', '');
+        showError('❌ ' + (msgs[code] || 'Error al enviar el reporte. Intenta de nuevo.'));
+      }
+    };
+
+    // ── Mostrar confirmación: oculta el form, muestra la pantalla ──
+    function showConfirmScreen() {
+      document.getElementById('formArea').style.display    = 'none';
+      document.getElementById('confirmScreen').classList.add('visible');
+      // Cambiar título de la barra
+      document.getElementById('topTitle').textContent = '✅ Enviado';
+      // La flecha volver ahora va a mis-reportes
+      document.getElementById('backBtn').href = 'mis-reportes.html';
+      // Scroll al top
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    const btn = document.getElementById('submitBtn');
-    btn.disabled = true;
-    btn.innerHTML = '<span class="spinner"></span> Enviando…';
-    hideMessages();
-
-    try {
-      // 1. Guardar en Firestore
-      await addDoc(collection(db, 'reportes'), {
-        direccion,
-        tipo,
-        severidad,
-        descripcion,
-        fecha:         new Date().toISOString(),
-        userId:        currentUser.uid,
-        nombreUsuario,
-        estado:        'Pendiente',
-        votos:         0,
-      });
-
-      // 2. Abrir Portal Bogotá
-      window.open('https://portalweb.bogota.gov.co', '_blank');
-
-      // 3. Mensaje éxito + countdown
-      showSuccess();
-      let secs = 3;
-      const iv = setInterval(() => {
-        secs--;
-        const badge = document.getElementById('countdown');
-        if (badge) badge.textContent = secs + 's';
-        if (secs <= 0) { clearInterval(iv); window.location.href = 'mis-reportes.html'; }
-      }, 1000);
-
-    } catch (error) {
-      btn.disabled = false;
-      btn.textContent = 'Enviar Reporte 🚀';
-      const msgs = {
-        'permission-denied':  'Sin permisos. Verifica tu sesión.',
-        'unavailable':        'Sin conexión. Verifica tu internet.',
-        'resource-exhausted': 'Demasiadas solicitudes. Espera un momento.',
-      };
-      const code = (error.code || '').replace('firestore/', '');
-      showError('❌ ' + (msgs[code] || 'Error al enviar el reporte. Intenta de nuevo.'));
+    function showError(msg) {
+      const el = document.getElementById('errorMsg');
+      el.textContent = msg;
+      el.classList.remove('visible'); void el.offsetWidth; el.classList.add('visible');
+      el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
     }
-  };
-
-  function showError(msg) {
-    const el = document.getElementById('errorMsg');
-    el.textContent = msg;
-    el.classList.remove('visible'); void el.offsetWidth; el.classList.add('visible');
-    document.getElementById('successMsg').classList.remove('visible');
-    el.scrollIntoView({ behavior:'smooth', block:'nearest' });
-  }
-  function showSuccess() {
-    const el = document.getElementById('successMsg');
-    el.innerHTML = `✅ Reporte enviado. Revisa tu navegador para completar el derecho de petición en Portal Bogotá.<br><br>Redirigiendo a Mis Reportes… <span class="countdown" id="countdown">3s</span>`;
-    el.classList.add('visible');
-    document.getElementById('errorMsg').classList.remove('visible');
-    el.scrollIntoView({ behavior:'smooth', block:'nearest' });
-  }
-  function hideMessages() {
-    document.getElementById('errorMsg').classList.remove('visible');
-    document.getElementById('successMsg').classList.remove('visible');
-  }
-</script>
+    function hideError() {
+      document.getElementById('errorMsg').classList.remove('visible');
+    }
+  </script>
 </body>
 </html>
