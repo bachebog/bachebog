@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#F5C518">
+  <link rel="manifest" href="/bachebog/manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="BacheBog">
+  <title>BacheBog — Nuevo Reporte</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #1A1A2E;
+      --surface: #16213E;
+      --surface2:#0F3460;
+      --accent:  #F5C518;
+      --text:    #F0F2F8;
+      --text2:   #9BA3C0;
+      --text3:   #5A6080;
+      --danger:  #FF3A5C;
+      --success: #3AE3B7;
+      --radius:  16px;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+    html, body {
+      min-height: 100vh;
+      min-height: 100dvh;
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+    }
+
+    .app-shell {
+      width: 100%;
+      max-width: 430px;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── TOP BAR ── */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 52px 20px 16px;
+      flex-shrink: 0;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      background: linear-gradient(180deg, var(--bg) 75%, transparent 100%);
+    }
+
+    .back-btn {
+      width: 40px; height: 40px;
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.09);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none;
+      font-size: 18px;
+      color: var(--text2);
+      flex-shrink: 0;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .back-btn:hover  { background: rgba(255,255,255,0.09); border-color: rgba(245,197,24,0.25); }
+    .back-btn:active { transform: scale(0.93); }
+
+    .top-title { font-size: 20px; font-weight: 900; }
+
+    /* ── BODY ── */
+    .scroll-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px 20px 48px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .scroll-area::-webkit-scrollbar { display: none; }
+
+    /* ── INTRO ── */
+    .intro-card {
+      background: var(--surface);
+      border: 1.5px solid rgba(255,255,255,0.07);
+      border-radius: var(--radius);
+      padding: 16px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 22px;
+      animation: fadeUp 0.35s ease forwards;
+    }
+    .intro-icon  { font-size: 32px; flex-shrink: 0; }
+    .intro-title { font-size: 14px; font-weight: 800; }
+    .intro-sub   { font-size: 12px; color: var(--text3); font-weight: 600; margin-top: 2px; }
+
+    /* ── MESSAGES ── */
+    .msg-box {
+      border-radius: 14px;
+      padding: 14px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 18px;
+      line-height: 1.55;
+      display: none;
+    }
+    .msg-box.visible { display: block; animation: fadeUp 0.3s ease; }
+    .msg-box.error   { background: rgba(255,58,92,0.12); border: 1.5px solid rgba(255,58,92,0.28); color: var(--danger); }
+    .msg-box.success { background: rgba(58,227,183,0.10); border: 1.5px solid rgba(58,227,183,0.25); color: var(--success); }
+    .countdown { display:inline-block; background:rgba(58,227,183,0.15); border-radius:6px; padding:1px 7px; font-size:12px; margin-left:4px; }
+
+    /* ── FORM GROUPS ── */
+    .form-group {
+      margin-bottom: 20px;
+      animation: fadeUp 0.38s ease forwards;
+      opacity: 0;
+    }
+    .form-group:nth-child(1){ animation-delay:.05s }
+    .form-group:nth-child(2){ animation-delay:.10s }
+    .form-group:nth-child(3){ animation-delay:.15s }
+    .form-group:nth-child(4){ animation-delay:.20s }
+    .form-group:nth-child(5){ animation-delay:.25s }
+
+    .form-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: var(--text3);
+      margin-bottom: 9px;
+    }
+    .req { color: var(--danger); font-size: 14px; letter-spacing: 0; }
+
+    .form-input,
+    .form-select,
+    .form-textarea {
+      width: 100%;
+      background: rgba(15,52,96,0.45);
+      border: 1.5px solid rgba(255,255,255,0.09);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      outline: none;
+      transition: border-color .2s, background .2s, box-shadow .2s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+    .form-input::placeholder,
+    .form-textarea::placeholder { color: var(--text3); font-weight: 500; }
+    .form-input:focus,
+    .form-select:focus,
+    .form-textarea:focus {
+      border-color: var(--accent);
+      background: rgba(15,52,96,0.65);
+      box-shadow: 0 0 0 3px rgba(245,197,24,0.10);
+    }
+    .form-input.invalid,
+    .form-select.invalid { border-color: var(--danger); box-shadow: 0 0 0 3px rgba(255,58,92,0.09); }
+
+    /* select arrow */
+    .select-wrap { position: relative; }
+    .select-wrap::after {
+      content: '▾';
+      position: absolute;
+      right: 16px; top: 50%;
+      transform: translateY(-50%);
+      color: var(--text3); font-size: 16px;
+      pointer-events: none;
+    }
+    .form-select { cursor: pointer; padding-right: 40px; }
+    .form-select option { background: #16213E; color: var(--text); }
+
+    /* textarea */
+    .form-textarea { resize: none; height: 100px; line-height: 1.55; }
+    .char-count {
+      text-align: right;
+      font-size: 11px; font-weight: 700;
+      color: var(--text3); margin-top: 5px;
+      transition: color .2s;
+    }
+    .char-count.near  { color: var(--accent); }
+    .char-count.limit { color: var(--danger); }
+
+    /* ── SEVERIDAD ── */
+    .severity-grid {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 10px;
+    }
+    .severity-btn {
+      background: rgba(15,52,96,0.45);
+      border: 2px solid rgba(255,255,255,0.09);
+      border-radius: var(--radius);
+      padding: 14px 8px;
+      display: flex; flex-direction: column;
+      align-items: center; gap: 8px;
+      cursor: pointer;
+      transition: all .2s;
+    }
+    .severity-btn:active { transform: scale(0.95); }
+    .sev-dot {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; font-weight: 800;
+      transition: transform .2s;
+    }
+    .dot-leve     { background: rgba(58,227,183,.15); border: 2px solid rgba(58,227,183,.35); }
+    .dot-moderado { background: rgba(245,197,24,.15); border: 2px solid rgba(245,197,24,.35); }
+    .dot-grave    { background: rgba(255,58,92,.15);  border: 2px solid rgba(255,58,92,.35);  }
+    .sev-label {
+      font-size: 12px; font-weight: 800;
+      color: var(--text2);
+      letter-spacing: .3px;
+    }
+
+    .severity-btn.selected {
+      border-color: var(--accent);
+      background: rgba(245,197,24,.10);
+      box-shadow: 0 0 0 1px rgba(245,197,24,.18), 0 4px 16px rgba(245,197,24,.12);
+    }
+    .severity-btn.selected .sev-label { color: var(--accent); }
+    .severity-btn.selected .sev-dot   { transform: scale(1.15); }
+
+    /* ── AVISO PORTAL ── */
+    .portal-notice {
+      background: rgba(15,52,96,.45);
+      border: 1.5px solid rgba(245,197,24,.14);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      display: flex; gap: 12px;
+      margin-bottom: 20px;
+    }
+    .portal-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+    .portal-text { font-size: 12px; color: var(--text2); font-weight: 600; line-height: 1.55; }
+    .portal-text strong { color: var(--accent); font-weight: 800; }
+
+    /* ── DIVIDER ── */
+    .divider {
+      display: flex; align-items: center; gap: 10px;
+      margin: 24px 0 20px;
+    }
+    .div-line  { flex:1; height:1px; background: rgba(255,255,255,.07); }
+    .div-label { font-size:11px; font-weight:700; color:var(--text3); letter-spacing:1px; text-transform:uppercase; }
+
+    /* ── BTN SUBMIT ── */
+    .btn-submit {
+      width: 100%;
+      padding: 17px;
+      background: var(--accent);
+      color: #0A0B0E;
+      border: none;
+      border-radius: var(--radius);
+      font-family: 'Nunito', sans-serif;
+      font-size: 16px; font-weight: 800;
+      letter-spacing: .5px;
+      cursor: pointer;
+      position: relative; overflow: hidden;
+      transition: transform .15s, box-shadow .2s, opacity .2s;
+      box-shadow: 0 8px 28px rgba(245,197,24,.32);
+    }
+    .btn-submit::after {
+      content:'';
+      position:absolute; inset:0;
+      background: linear-gradient(135deg, rgba(255,255,255,.18) 0%, transparent 60%);
+    }
+    .btn-submit:hover  { box-shadow: 0 10px 36px rgba(245,197,24,.48); }
+    .btn-submit:active { transform: scale(.98); opacity: .9; }
+    .btn-submit:disabled { opacity:.55; cursor:not-allowed; transform:none; box-shadow:none; }
+
+    .spinner {
+      display:inline-block; width:17px; height:17px;
+      border:2.5px solid rgba(0,0,0,.25); border-top-color:#0A0B0E;
+      border-radius:50%; animation:spin .7s linear infinite;
+      vertical-align:middle; margin-right:6px;
+    }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(12px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+  </style>
+</head>
+<body>
+<div class="app-shell">
+
+  <!-- Top Bar -->
+  <div class="top-bar">
+    <a class="back-btn" href="home.html">←</a>
+    <div class="top-title">🆕 Nuevo Reporte</div>
+  </div>
+
+  <div class="scroll-area">
+
+    <!-- Intro -->
+    <div class="intro-card">
+      <div class="intro-icon">🚧</div>
+      <div>
+        <div class="intro-title">Reporta un daño vial</div>
+        <div class="intro-sub">Tu reporte ayuda a priorizar reparaciones en Bogotá</div>
+      </div>
+    </div>
+
+    <!-- Mensajes -->
+    <div class="msg-box error"   id="errorMsg"></div>
+    <div class="msg-box success" id="successMsg"></div>
+
+    <!-- 1. Dirección -->
+    <div class="form-group">
+      <label class="form-label">📍 Dirección <span class="req">*</span></label>
+      <input
+        type="text"
+        id="direccionInput"
+        class="form-input"
+        placeholder="Ej: Cra 7 con Calle 72"
+        autocomplete="street-address"
+        autocapitalize="words"
+        maxlength="120"
+      >
+    </div>
+
+    <!-- 2. Tipo de daño -->
+    <div class="form-group">
+      <label class="form-label">🔧 Tipo de daño <span class="req">*</span></label>
+      <div class="select-wrap">
+        <select id="tipoSelect" class="form-select">
+          <option value="" disabled selected>Selecciona el tipo de daño…</option>
+          <option value="Hueco profundo">Hueco profundo</option>
+          <option value="Hueco superficial">Hueco superficial</option>
+          <option value="Hundimiento">Hundimiento</option>
+          <option value="Grieta">Grieta</option>
+          <option value="Deterioro general">Deterioro general</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- 3. Severidad -->
+    <div class="form-group">
+      <label class="form-label">⚠️ Severidad</label>
+      <div class="severity-grid">
+        <button type="button" class="severity-btn" data-value="Leve" onclick="selectSev(this)">
+          <div class="sev-dot dot-leve">🟢</div>
+          <span class="sev-label">Leve</span>
+        </button>
+        <button type="button" class="severity-btn selected" data-value="Moderado" onclick="selectSev(this)">
+          <div class="sev-dot dot-moderado">🟡</div>
+          <span class="sev-label">Moderado</span>
+        </button>
+        <button type="button" class="severity-btn" data-value="Grave" onclick="selectSev(this)">
+          <div class="sev-dot dot-grave">🔴</div>
+          <span class="sev-label">Grave</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- 4. Descripción -->
+    <div class="form-group">
+      <label class="form-label">
+        📝 Descripción
+        <span style="color:var(--text3);letter-spacing:0;text-transform:none;font-size:10px;font-weight:600">(opcional)</span>
+      </label>
+      <textarea
+        id="descripcionInput"
+        class="form-textarea"
+        placeholder="Describe el daño: tamaño, peligrosidad, contexto…"
+        maxlength="200"
+      ></textarea>
+      <div class="char-count" id="charCount">0 / 200</div>
+    </div>
+
+    <div class="divider">
+      <div class="div-line"></div>
+      <span class="div-label">Al enviar</span>
+      <div class="div-line"></div>
+    </div>
+
+    <!-- Aviso Portal Bogotá -->
+    <div class="portal-notice">
+      <div class="portal-icon">🏛️</div>
+      <div class="portal-text">
+        Al enviar se abrirá <strong>Portal Bogotá</strong> en tu navegador para radicar el derecho de petición oficial ante el IDU o la alcaldía.
+      </div>
+    </div>
+
+    <!-- Botón -->
+    <button class="btn-submit" id="submitBtn" onclick="handleSubmit()">
+      Enviar Reporte 🚀
+    </button>
+
+  </div>
+</div>
+
+<script type="module">
+  import { initializeApp }    from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+  import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+  import { getFirestore, doc, getDoc, addDoc, collection }
+    from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyB7hT8OdmL6MMvSmfv9PRoQT0-4mhTBBB0",
+    authDomain: "bachebog-7393e.firebaseapp.com",
+    projectId: "bachebog-7393e",
+    storageBucket: "bachebog-7393e.firebasestorage.app",
+    messagingSenderId: "712370826301",
+    appId: "1:712370826301:web:19c8f77f773b615663ce54"
+  };
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db   = getFirestore(app);
+
+  let currentUser   = null;
+  let nombreUsuario = 'Usuario';
+
+  // ── Auth guard ──
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) { window.location.replace('../index.html'); return; }
+    currentUser = user;
+    try {
+      const snap = await getDoc(doc(db, 'usuarios', user.uid));
+      nombreUsuario = snap.exists()
+        ? (snap.data().nombre || user.displayName || 'Usuario')
+        : (user.displayName || user.email.split('@')[0]);
+    } catch { nombreUsuario = user.displayName || 'Usuario'; }
+  });
+
+  // ── Severidad ──
+  window.selectSev = function(btn) {
+    document.querySelectorAll('.severity-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  };
+
+  // ── Char count ──
+  const descEl      = document.getElementById('descripcionInput');
+  const charCountEl = document.getElementById('charCount');
+  descEl.addEventListener('input', () => {
+    const n = descEl.value.length;
+    charCountEl.textContent = `${n} / 200`;
+    charCountEl.className = 'char-count' + (n >= 200 ? ' limit' : n >= 160 ? ' near' : '');
+  });
+
+  // Limpiar invalid al editar
+  ['direccionInput','tipoSelect'].forEach(id => {
+    document.getElementById(id).addEventListener('input', () => {
+      document.getElementById(id).classList.remove('invalid');
+      document.getElementById('errorMsg').classList.remove('visible');
+    });
+    document.getElementById(id).addEventListener('change', () => {
+      document.getElementById(id).classList.remove('invalid');
+      document.getElementById('errorMsg').classList.remove('visible');
+    });
+  });
+
+  // ── Submit ──
+  window.handleSubmit = async function() {
+    const direccion   = document.getElementById('direccionInput').value.trim();
+    const tipo        = document.getElementById('tipoSelect').value;
+    const descripcion = document.getElementById('descripcionInput').value.trim();
+    const severidad   = document.querySelector('.severity-btn.selected')?.dataset.value || 'Moderado';
+
+    let hasError = false;
+    if (!direccion) { document.getElementById('direccionInput').classList.add('invalid'); hasError = true; }
+    if (!tipo)      { document.getElementById('tipoSelect').classList.add('invalid');     hasError = true; }
+    if (hasError)   { showError('❌ Por favor completa la dirección y el tipo de daño.'); return; }
+    if (!currentUser) {
+      showError('❌ Sesión expirada. Vuelve a iniciar sesión.');
+      setTimeout(() => window.location.replace('../index.html'), 2000);
+      return;
+    }
+
+    const btn = document.getElementById('submitBtn');
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Enviando…';
+    hideMessages();
+
+    try {
+      // 1. Guardar en Firestore
+      await addDoc(collection(db, 'reportes'), {
+        direccion,
+        tipo,
+        severidad,
+        descripcion,
+        fecha:         new Date().toISOString(),
+        userId:        currentUser.uid,
+        nombreUsuario,
+        estado:        'Pendiente',
+        votos:         0,
+      });
+
+      // 2. Abrir Portal Bogotá
+      window.open('https://portalweb.bogota.gov.co', '_blank');
+
+      // 3. Mensaje éxito + countdown
+      showSuccess();
+      let secs = 3;
+      const iv = setInterval(() => {
+        secs--;
+        const badge = document.getElementById('countdown');
+        if (badge) badge.textContent = secs + 's';
+        if (secs <= 0) { clearInterval(iv); window.location.href = 'mis-reportes.html'; }
+      }, 1000);
+
+    } catch (error) {
+      btn.disabled = false;
+      btn.textContent = 'Enviar Reporte 🚀';
+      const msgs = {
+        'permission-denied':  'Sin permisos. Verifica tu sesión.',
+        'unavailable':        'Sin conexión. Verifica tu internet.',
+        'resource-exhausted': 'Demasiadas solicitudes. Espera un momento.',
+      };
+      const code = (error.code || '').replace('firestore/', '');
+      showError('❌ ' + (msgs[code] || 'Error al enviar el reporte. Intenta de nuevo.'));
+    }
+  };
+
+  function showError(msg) {
+    const el = document.getElementById('errorMsg');
+    el.textContent = msg;
+    el.classList.remove('visible'); void el.offsetWidth; el.classList.add('visible');
+    document.getElementById('successMsg').classList.remove('visible');
+    el.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+  function showSuccess() {
+    const el = document.getElementById('successMsg');
+    el.innerHTML = `✅ Reporte enviado. Revisa tu navegador para completar el derecho de petición en Portal Bogotá.<br><br>Redirigiendo a Mis Reportes… <span class="countdown" id="countdown">3s</span>`;
+    el.classList.add('visible');
+    document.getElementById('errorMsg').classList.remove('visible');
+    el.scrollIntoView({ behavior:'smooth', block:'nearest' });
+  }
+  function hideMessages() {
+    document.getElementById('errorMsg').classList.remove('visible');
+    document.getElementById('successMsg').classList.remove('visible');
+  }
+</script>
+</body>
+</html>
