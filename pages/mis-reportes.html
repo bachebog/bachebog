@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#F5C518">
+  <link rel="manifest" href="/bachebog/manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="BacheBog">
+  <title>BacheBog — Mis Reportes</title>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg:      #1A1A2E;
+      --surface: #16213E;
+      --surface2:#0F3460;
+      --accent:  #F5C518;
+      --text:    #F0F2F8;
+      --text2:   #9BA3C0;
+      --text3:   #5A6080;
+      --danger:  #FF3A5C;
+      --warning: #F5C518;
+      --success: #3AE3B7;
+      --radius:  16px;
+    }
+
+    * { margin:0; padding:0; box-sizing:border-box; -webkit-tap-highlight-color:transparent; }
+
+    html, body {
+      height: 100%;
+      font-family: 'Nunito', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    body { display: flex; justify-content: center; }
+
+    .app-shell {
+      width: 100%;
+      max-width: 430px;
+      height: 100vh;
+      height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── TOP BAR ── */
+    .top-bar {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 52px 20px 14px;
+      flex-shrink: 0;
+      background: linear-gradient(180deg, rgba(10,10,20,0.95) 70%, transparent 100%);
+      position: relative;
+      z-index: 10;
+    }
+
+    .back-btn {
+      width: 40px; height: 40px;
+      background: rgba(255,255,255,0.05);
+      border: 1.5px solid rgba(255,255,255,0.09);
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      text-decoration: none;
+      font-size: 18px; color: var(--text2);
+      flex-shrink: 0;
+      transition: background 0.2s, border-color 0.2s;
+    }
+    .back-btn:hover  { background: rgba(255,255,255,0.09); border-color: rgba(245,197,24,0.25); }
+    .back-btn:active { transform: scale(0.93); }
+
+    .top-title { font-size: 20px; font-weight: 900; }
+
+    .report-count {
+      margin-left: auto;
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--text3);
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 4px 12px;
+      min-width: 28px;
+      text-align: center;
+    }
+
+    /* ── FILTROS ── */
+    .filter-wrap {
+      padding: 0 16px 14px;
+      flex-shrink: 0;
+    }
+
+    .filter-track {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .filter-track::-webkit-scrollbar { display: none; }
+
+    .filter-btn {
+      flex-shrink: 0;
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1.5px solid rgba(255,255,255,0.09);
+      background: rgba(255,255,255,0.04);
+      font-family: 'Nunito', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text3);
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .filter-btn:active { transform: scale(0.95); }
+    .filter-btn.active {
+      background: rgba(245,197,24,0.15);
+      border-color: rgba(245,197,24,0.45);
+      color: var(--accent);
+    }
+
+    /* ── SCROLL LIST ── */
+    .scroll-area {
+      flex: 1;
+      overflow-y: auto;
+      padding: 4px 16px 32px;
+      -webkit-overflow-scrolling: touch;
+    }
+    .scroll-area::-webkit-scrollbar { display: none; }
+
+    /* ── SKELETON CARDS ── */
+    .skeleton-card {
+      background: var(--surface);
+      border: 1.5px solid rgba(255,255,255,0.06);
+      border-radius: var(--radius);
+      padding: 18px 16px;
+      margin-bottom: 12px;
+    }
+    .sk-line {
+      height: 13px;
+      border-radius: 6px;
+      background: linear-gradient(90deg, var(--surface) 25%, var(--surface2) 50%, var(--surface) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite;
+      margin-bottom: 10px;
+    }
+    .sk-line.wide  { width: 75%; }
+    .sk-line.mid   { width: 50%; }
+    .sk-line.short { width: 35%; }
+    @keyframes shimmer {
+      0%   { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ── REPORT CARD ── */
+    .report-card {
+      background: var(--surface);
+      border: 1.5px solid rgba(255,255,255,0.07);
+      border-radius: var(--radius);
+      padding: 16px;
+      margin-bottom: 12px;
+      cursor: default;
+      transition: border-color 0.2s, transform 0.15s;
+      animation: fadeUp 0.35s ease forwards;
+      opacity: 0;
+    }
+    .report-card:hover { border-color: rgba(245,197,24,0.20); transform: translateY(-1px); }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(10px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* card header: dirección + badge */
+    .card-header {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .card-address {
+      font-size: 15px;
+      font-weight: 800;
+      color: var(--text);
+      line-height: 1.3;
+      flex: 1;
+    }
+
+    /* Estado badge */
+    .badge {
+      flex-shrink: 0;
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      padding: 4px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+    .badge-pendiente   { background: rgba(255,58,92,0.15);  color: #FF3A5C;  border: 1px solid rgba(255,58,92,0.25);  }
+    .badge-en-revision { background: rgba(245,197,24,0.15); color: #F5C518;  border: 1px solid rgba(245,197,24,0.30); }
+    .badge-resuelto    { background: rgba(58,227,183,0.15); color: #3AE3B7;  border: 1px solid rgba(58,227,183,0.25); }
+
+    /* card meta row */
+    .card-meta {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .meta-item {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text3);
+    }
+    .meta-sep {
+      width: 3px; height: 3px;
+      border-radius: 50%;
+      background: var(--text3);
+      opacity: 0.4;
+    }
+
+    /* card footer: fecha + votos */
+    .card-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-top: 12px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(255,255,255,0.06);
+    }
+
+    .card-date {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text3);
+    }
+
+    .card-votes {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--text2);
+    }
+
+    /* ── EMPTY STATE ── */
+    .empty-state {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 60px 32px;
+      gap: 0;
+    }
+    .empty-state.visible { display: flex; }
+
+    .empty-icon {
+      font-size: 60px;
+      margin-bottom: 20px;
+      opacity: 0.6;
+    }
+    .empty-title {
+      font-size: 18px;
+      font-weight: 800;
+      color: var(--text2);
+      margin-bottom: 8px;
+    }
+    .empty-sub {
+      font-size: 13px;
+      color: var(--text3);
+      font-weight: 600;
+      margin-bottom: 28px;
+      line-height: 1.5;
+    }
+    .btn-empty {
+      padding: 14px 28px;
+      background: var(--accent);
+      color: #0A0B0E;
+      border: none;
+      border-radius: var(--radius);
+      font-family: 'Nunito', sans-serif;
+      font-size: 15px;
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: none;
+      box-shadow: 0 6px 20px rgba(245,197,24,0.30);
+      transition: transform 0.15s, box-shadow 0.2s;
+      position: relative; overflow: hidden;
+    }
+    .btn-empty::after {
+      content: '';
+      position: absolute; inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.15) 0%, transparent 55%);
+    }
+    .btn-empty:hover  { box-shadow: 0 8px 28px rgba(245,197,24,0.45); }
+    .btn-empty:active { transform: scale(0.97); }
+
+    /* ── NO MATCH (filtro sin resultados) ── */
+    .no-match {
+      display: none;
+      text-align: center;
+      padding: 40px 20px;
+    }
+    .no-match.visible { display: block; }
+    .no-match-icon  { font-size: 36px; margin-bottom: 12px; opacity: 0.5; }
+    .no-match-text  { font-size: 14px; font-weight: 600; color: var(--text3); }
+
+    /* ── LOADING OVERLAY ── */
+    .loading-overlay {
+      position: fixed; inset: 0;
+      background: var(--bg);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 999;
+      transition: opacity 0.3s;
+    }
+    .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+    .loading-spinner {
+      width: 36px; height: 36px;
+      border: 3px solid rgba(245,197,24,0.15);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+
+  <div class="loading-overlay" id="loadingOverlay">
+    <div class="loading-spinner"></div>
+  </div>
+
+  <div class="app-shell">
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+      <a href="home.html" class="back-btn" title="Volver">←</a>
+      <div class="top-title">📋 Mis Reportes</div>
+      <div class="report-count" id="reportCount">—</div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="filter-wrap">
+      <div class="filter-track">
+        <button class="filter-btn active" data-filter="Todos"       onclick="setFilter(this)">Todos</button>
+        <button class="filter-btn"        data-filter="Pendiente"   onclick="setFilter(this)">Pendiente</button>
+        <button class="filter-btn"        data-filter="En revisión" onclick="setFilter(this)">En revisión</button>
+        <button class="filter-btn"        data-filter="Resuelto"    onclick="setFilter(this)">Resuelto</button>
+      </div>
+    </div>
+
+    <!-- Lista -->
+    <div class="scroll-area" id="scrollArea">
+
+      <!-- Skeletons mientras carga -->
+      <div id="skeletons">
+        <div class="skeleton-card"><div class="sk-line wide"></div><div class="sk-line mid"></div><div class="sk-line short"></div></div>
+        <div class="skeleton-card"><div class="sk-line wide"></div><div class="sk-line mid"></div><div class="sk-line short"></div></div>
+        <div class="skeleton-card"><div class="sk-line wide"></div><div class="sk-line mid"></div><div class="sk-line short"></div></div>
+      </div>
+
+      <!-- Lista de reportes -->
+      <div id="reportList"></div>
+
+      <!-- Sin resultados para el filtro activo -->
+      <div class="no-match" id="noMatch">
+        <div class="no-match-icon">🔍</div>
+        <div class="no-match-text">No tienes reportes con ese estado.</div>
+      </div>
+
+      <!-- Estado vacío total -->
+      <div class="empty-state" id="emptyState">
+        <div class="empty-icon">🕳️</div>
+        <div class="empty-title">Aún no has enviado reportes.</div>
+        <div class="empty-sub">Reporta un hueco o daño vial<br>y aparecerá aquí.</div>
+        <a href="nuevo-reporte.html" class="btn-empty">🆕 Crear tu primer reporte</a>
+      </div>
+
+    </div><!-- /scroll-area -->
+
+  </div><!-- /app-shell -->
+
+  <script type="module">
+    import { initializeApp }           from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-auth.js";
+    import { getFirestore, collection, query, where, orderBy, getDocs }
+      from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB7hT8OdmL6MMvSmfv9PRoQT0-4mhTBBB0",
+      authDomain: "bachebog-7393e.firebaseapp.com",
+      projectId: "bachebog-7393e",
+      storageBucket: "bachebog-7393e.firebasestorage.app",
+      messagingSenderId: "712370826301",
+      appId: "1:712370826301:web:19c8f77f773b615663ce54"
+    };
+
+    const app  = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db   = getFirestore(app);
+
+    const overlay    = document.getElementById('loadingOverlay');
+    const reportList = document.getElementById('reportList');
+    const skeletons  = document.getElementById('skeletons');
+    const emptyState = document.getElementById('emptyState');
+    const noMatch    = document.getElementById('noMatch');
+    const countEl    = document.getElementById('reportCount');
+
+    let allReports   = [];   // todos los reportes cargados
+    let activeFilter = 'Todos';
+
+    // ── Auth guard ──
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.replace('../index.html'); return; }
+
+      overlay.classList.add('hidden');
+      setTimeout(() => overlay.remove(), 300);
+
+      await loadReports(user.uid);
+    });
+
+    // ── Cargar reportes de Firestore ──
+    async function loadReports(uid) {
+      try {
+        const q = query(
+          collection(db, 'reportes'),
+          where('userId', '==', uid),
+          orderBy('fecha', 'desc')
+        );
+        const snap = await getDocs(q);
+        allReports = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      } catch (err) {
+        // Si falla el índice compuesto, intentar sin orderBy
+        try {
+          const q2 = query(
+            collection(db, 'reportes'),
+            where('userId', '==', uid)
+          );
+          const snap2 = await getDocs(q2);
+          allReports = snap2.docs
+            .map(d => ({ id: d.id, ...d.data() }))
+            .sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+        } catch {
+          allReports = [];
+        }
+      }
+
+      skeletons.remove();
+      renderList();
+    }
+
+    // ── Renderizar lista con filtro activo ──
+    function renderList() {
+      const filtered = activeFilter === 'Todos'
+        ? allReports
+        : allReports.filter(r => r.estado === activeFilter);
+
+      // Actualizar contador
+      countEl.textContent = allReports.length;
+
+      // Vaciar lista
+      reportList.innerHTML = '';
+      emptyState.classList.remove('visible');
+      noMatch.classList.remove('visible');
+
+      if (allReports.length === 0) {
+        emptyState.classList.add('visible');
+        return;
+      }
+
+      if (filtered.length === 0) {
+        noMatch.classList.add('visible');
+        return;
+      }
+
+      filtered.forEach((r, i) => {
+        const card = buildCard(r, i);
+        reportList.appendChild(card);
+      });
+    }
+
+    // ── Construir tarjeta ──
+    function buildCard(r, index) {
+      const div = document.createElement('div');
+      div.className = 'report-card';
+      div.style.animationDelay = `${index * 0.05}s`;
+
+      const estadoKey = (r.estado || 'Pendiente').toLowerCase().replace(' ', '-');
+      const badgeClass = {
+        'pendiente':   'badge-pendiente',
+        'en-revisión': 'badge-en-revision',
+        'resuelto':    'badge-resuelto',
+      }[estadoKey] || 'badge-pendiente';
+
+      const sevIcon = { 'Leve': '🟢', 'Moderado': '🟡', 'Grave': '🔴' }[r.severidad] || '🟡';
+
+      const fecha = r.fecha ? formatDate(r.fecha) : '—';
+
+      div.innerHTML = `
+        <div class="card-header">
+          <div class="card-address">${escHtml(r.direccion || 'Sin dirección')}</div>
+          <span class="badge ${badgeClass}">${escHtml(r.estado || 'Pendiente')}</span>
+        </div>
+        <div class="card-meta">
+          <span class="meta-item">${sevIcon} ${escHtml(r.severidad || '—')}</span>
+          <span class="meta-sep"></span>
+          <span class="meta-item">🔧 ${escHtml(r.tipo || '—')}</span>
+        </div>
+        <div class="card-footer">
+          <span class="card-date">📅 ${fecha}</span>
+          <span class="card-votes">👍 ${r.votos ?? 0}</span>
+        </div>
+      `;
+      return div;
+    }
+
+    // ── Filtro ──
+    window.setFilter = function(btn) {
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      activeFilter = btn.dataset.filter;
+      renderList();
+    };
+
+    // ── Helpers ──
+    function formatDate(iso) {
+      try {
+        const d = new Date(iso);
+        const dd = String(d.getDate()).padStart(2,'0');
+        const mm = String(d.getMonth()+1).padStart(2,'0');
+        const yy = d.getFullYear();
+        return `${dd}/${mm}/${yy}`;
+      } catch { return '—'; }
+    }
+
+    function escHtml(str) {
+      return String(str)
+        .replace(/&/g,'&amp;')
+        .replace(/</g,'&lt;')
+        .replace(/>/g,'&gt;')
+        .replace(/"/g,'&quot;');
+    }
+  </script>
+</body>
+</html>
