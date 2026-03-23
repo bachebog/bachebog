@@ -8,7 +8,6 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>BacheBog — Menú Principal</title>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/estilos.css">
   <style>
     :root {
       --bg:       #1A1A2E;
@@ -246,17 +245,21 @@
 
     /* ── BOTTOM NAV ── */
     .bottom-nav {
-      position: absolute;
-      bottom: 0; left: 0; right: 0;
+      position: fixed;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 430px;
       height: calc(var(--nav-h) + env(safe-area-inset-bottom, 0px));
-      background: rgba(12, 16, 30, 0.96);
+      background: rgba(12, 16, 30, 0.97);
       backdrop-filter: blur(16px);
       -webkit-backdrop-filter: blur(16px);
       border-top: 1px solid rgba(255,255,255,0.07);
       display: flex;
       align-items: flex-start;
       padding-top: 8px;
-      z-index: 20;
+      z-index: 200;
     }
 
     .nav-item {
